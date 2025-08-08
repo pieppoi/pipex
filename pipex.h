@@ -13,7 +13,8 @@
 #ifndef PIPEX_H
 # define PIPEX_H
 
-# include "ft_printf/ft_printf.h"
+// # include "ft_printf/ft_printf.h"
+void	ft_error(const char *msg);
 # include <unistd.h>     // read, write, access, close, unlink, dup, dup2, execve, fork, pipe
 # include <fcntl.h>      // open
 # include <stdlib.h>     // malloc, free, exit

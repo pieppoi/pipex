@@ -11,8 +11,8 @@
 # **************************************************************************** #
 
 CC = gcc
-SRCS = main.c pipex.c utils.c
-INCS = includes
+SRCS = src/main.c src/pipex.c src/error.c
+INCS = .
 NAME = pipex
 OBJS = ${SRCS:.c=.o}
 RM = rm -f
