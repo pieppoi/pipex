@@ -6,13 +6,11 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 00:00:00 by mkazuhik          #+#    #+#             */
-/*   Updated: 2024/06/10 00:00:00 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/08/09 03:02:21 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex.h"
-#include <stdlib.h>
-#include <unistd.h>
 
 static int	read_and_fill(char *buffer, int *i)
 {
@@ -45,4 +43,4 @@ int	get_next_line(char **line)
 	*line = buffer;
 	free(buffer);
 	return (r);
-} 
+}

@@ -6,14 +6,13 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 00:00:00 by mkazuhik          #+#    #+#             */
-/*   Updated: 2024/06/10 00:00:00 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/08/09 03:02:10 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex.h"
-#include <stdio.h>
 
 void	ft_error(const char *msg)
 {
 	perror(msg);
-} 
+}

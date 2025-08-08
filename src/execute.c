@@ -6,13 +6,11 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 00:00:00 by mkazuhik          #+#    #+#             */
-/*   Updated: 2024/06/10 00:00:00 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/08/09 03:02:01 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex.h"
-#include <stdlib.h>
-#include <unistd.h>
 
 static char	*get_cmd_path(char *argv, char **envp, char ***cmd)
 {
@@ -48,4 +46,4 @@ void	execute(char *argv, char **envp)
 		ft_error("execve");
 		exit(126);
 	}
-} 
+}
