@@ -21,6 +21,8 @@ char	*find_path(char *cmd, char **envp)
 	int		i;
 	char	*part_path;
 
+	if (!cmd || !*cmd) // 追加: コマンドがNULLまたは空文字列なら即return
+		return (0);
 	i = 0;
 	while (ft_strnstr(envp[i], "PATH", 4) == 0)
 		i++;
@@ -32,7 +34,13 @@ char	*find_path(char *cmd, char **envp)
 		path = ft_strjoin(part_path, cmd);
 		free(part_path);
 		if (access(path, F_OK) == 0)
+		{
+			int j = 0;
+			while (paths[j])
+				free(paths[j++]);
+			free(paths);
 			return (path);
+		}
 		free(path);
 		i++;
 	}
@@ -59,6 +67,16 @@ void	execute(char *argv, char **envp)
 
 	i = -1;
 	cmd = ft_split(argv, ' ');
+	if (!cmd || !cmd[0] || !*cmd[0]) // 追加: コマンドが空なら即エラー&解放
+	{
+		if (cmd) {
+			while (cmd[++i])
+				free(cmd[i]);
+			free(cmd);
+		}
+		ft_error("command not found");
+		exit(1);
+	}
 	path = find_path(cmd[0], envp);
 	if (!path)
 	{
@@ -66,6 +84,7 @@ void	execute(char *argv, char **envp)
 			free(cmd[i]);
 		free(cmd);
 		ft_error("command not found");
+		exit(1);
 	}
 	if (execve(path, cmd, envp) == -1)
 		ft_error("execve");
