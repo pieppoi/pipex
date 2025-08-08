@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_helper2.c                                    :+:      :+:    :+:   */
+/*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,31 +11,41 @@
 /* ************************************************************************** */
 
 #include "../pipex.h"
+#include <stdlib.h>
+#include <unistd.h>
 
-char	*find_path(char *cmd, char **envp)
+static char	*get_cmd_path(char *argv, char **envp, char ***cmd)
 {
-	char	**paths;
 	char	*path;
-	int		i;
 
-	if (!cmd || !envp)
-		return (0);
-	i = 0;
-	while (ft_strnstr(envp[i], "PATH", 4) == 0)
-		i++;
-	paths = ft_split(envp[i] + 5, ':');
-	i = 0;
-	while (paths[i])
+	*cmd = ft_split(argv, ' ');
+	if (!*cmd || !(*cmd)[0] || !*(*cmd)[0])
 	{
-		path = join_path(paths[i], cmd);
-		if (access(path, F_OK) == 0)
-		{
-			free_paths(paths);
-			return (path);
-		}
-		free(path);
-		i++;
+		free_cmd(*cmd);
+		ft_error("command not found");
+		exit(1);
 	}
-	free_paths(paths);
-	return (0);
+	path = find_path((*cmd)[0], envp);
+	if (!path)
+	{
+		free_cmd(*cmd);
+		ft_error("command not found");
+		exit(127);
+	}
+	return (path);
+}
+
+void	execute(char *argv, char **envp)
+{
+	char	**cmd;
+	char	*path;
+
+	path = get_cmd_path(argv, envp, &cmd);
+	if (execve(path, cmd, envp) == -1)
+	{
+		free_cmd(cmd);
+		free(path);
+		ft_error("execve");
+		exit(126);
+	}
 } 

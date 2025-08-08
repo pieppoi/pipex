@@ -42,4 +42,4 @@ void	free_cmd(char **cmd)
 	while (cmd && cmd[i])
 		free(cmd[i++]);
 	free(cmd);
-}
+} 

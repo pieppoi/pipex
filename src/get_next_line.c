@@ -45,4 +45,4 @@ int	get_next_line(char **line)
 	*line = buffer;
 	free(buffer);
 	return (r);
-}
+} 

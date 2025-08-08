@@ -61,11 +61,6 @@ char	*find_path(char *cmd, char **envp)
 	return (0);
 }
 
-void	ft_error(const char *msg)
-{
-	perror(msg);
-}
-
 void	free_cmd(char **cmd)
 {
 	int	i;
@@ -74,34 +69,4 @@ void	free_cmd(char **cmd)
 	while (cmd && cmd[i])
 		free(cmd[i++]);
 	free(cmd);
-}
-
-void	execute(char *argv, char **envp)
-{
-	char	**cmd;
-	int		i;
-	char	*path;
-
-	i = -1;
-	cmd = ft_split(argv, ' ');
-	if (!cmd || !cmd[0] || !*cmd[0])
-	{
-		free_cmd(cmd);
-		ft_error("command not found");
-		exit(1);
-	}
-	path = find_path(cmd[0], envp);
-	if (!path)
-	{
-		free_cmd(cmd);
-		ft_error("command not found");
-		exit(127);
-	}
-	if (execve(path, cmd, envp) == -1)
-	{
-		free_cmd(cmd);
-		free(path);
-		ft_error("execve");
-		exit(126);
-	}
 }
