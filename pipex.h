@@ -6,7 +6,7 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 14:12:30 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/08/08 17:23:13 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/08/09 00:47:24 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,15 @@
 # include <string.h>     // strerror
 # include <sys/wait.h>   // wait, waitpid
 
-void ft_error(const char *msg);
+//srs/pipex.c
+void	child_process(char **argv, char **envp, int *fd);
+void	parent_process(char **argv, char **envp, int *fd);
+
+//src/utils.c
+void	ft_error(const char *msg);
+char	*find_path(char *cmd, char **envp);
+void	execute(char *argv, char **envp);
+int		get_next_line(char **line);
+
 
 #endif

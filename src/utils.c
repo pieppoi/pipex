@@ -6,7 +6,7 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/04 10:26:01 by gcollet           #+#    #+#             */
-/*   Updated: 2025/08/09 00:28:26 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/08/09 00:45:26 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,10 @@ char	*find_path(char *cmd, char **envp)
 }
 
 /* A simple error displaying function. */
-void ft_error(const char *msg)
+void	ft_error(const char *msg)
 {
-    perror(msg);
-    exit(EXIT_FAILURE);
+	perror(msg);
+	exit(EXIT_FAILURE);
 }
 
 /* Function that take the command and send it to find_path
@@ -55,9 +55,9 @@ void ft_error(const char *msg)
 void	execute(char *argv, char **envp)
 {
 	char	**cmd;
-	int 	i;
+	int		i;
 	char	*path;
-	
+
 	i = -1;
 	cmd = ft_split(argv, ' ');
 	path = find_path(cmd[0], envp);
