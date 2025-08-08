@@ -22,14 +22,14 @@
 # include "libft/libft.h"
 
 //srs/pipex.c
-void	child_process(char **argv, char **envp, int *fd);
-void	parent_process(char **argv, char **envp, int *fd);
+void    child_process(char **argv, char **envp, int *fd);
+void    parent_process(char **argv, char **envp, int *fd);
 
 //src/utils.c
-void	ft_error(const char *msg);
-char	*find_path(char *cmd, char **envp);
-void	execute(char *argv, char **envp);
-int		get_next_line(char **line);
+void    ft_error(const char *msg);
+char    *find_path(char *cmd, char **envp);
+void    execute(char *argv, char **envp);
+int     get_next_line(char **line);
 
 
 #endif
