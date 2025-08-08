@@ -1,0 +1,5 @@
+==3360== Memcheck, a memory error detector
+==3360== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==3360== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
+==3360== Command: ./pipex testin.txt cat wc\ -l testout.txt
+==3360== 

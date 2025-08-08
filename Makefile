@@ -13,7 +13,7 @@
 NAME = pipex
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-SRCS = src/pipex.c src/utils.c
+SRCS = src/pipex.c src/utils.c src/execute.c src/ft_error.c
 OBJS = ${SRCS:.c=.o}
 RM = rm -f
 
