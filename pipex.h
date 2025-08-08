@@ -20,6 +20,6 @@
 # include <string.h>     // strerror
 # include <sys/wait.h>   // wait, waitpid
 
-void	ft_error(const char *msg);
+void ft_error(const char *msg);
 
 #endif
