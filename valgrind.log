@@ -1,0 +1,5 @@
+==2936== Memcheck, a memory error detector
+==2936== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==2936== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
+==2936== Command: ./pipex infile cat grep\ a outfile
+==2936== 
