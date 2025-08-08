@@ -12,62 +12,64 @@
 
 #include "../pipex.h"
 
-void	child_process(char **argv, char **envp, int *fd)
+void    child_process(char **argv, char **envp, int *fd)
 {
-	int	filein;
+    int     filein;
 
-	filein = open(argv[1], O_RDONLY, 0777);
-	if (filein == -1)
-	{
-		ft_error("open infile");
-		close(fd[0]);
-		close(fd[1]);
-		exit(1);
-	}
-	dup2(fd[1], STDOUT_FILENO);
-	dup2(filein, STDIN_FILENO);
-	close(fd[0]);
-	execute(argv[2], envp);
+    filein = open(argv[1], O_RDONLY, 0777);
+    if (filein == -1)
+    {
+        ft_error("open infile");
+        close(fd[0]);
+        close(fd[1]);
+        exit(1);
+    }
+    dup2(fd[1], STDOUT_FILENO);
+    dup2(filein, STDIN_FILENO);
+    close(fd[0]);
+    execute(argv[2], envp);
 }
 
-void	parent_process(char **argv, char **envp, int *fd)
+void    parent_process(char **argv, char **envp, int *fd)
 {
-	int	fileout;
+    int     fileout;
 
-	fileout = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	if (fileout == -1)
-	{
-		ft_error("open infile");
-		close(fd[0]);
-		close(fd[1]);
-		exit(1);
-	}
-	dup2(fd[0], STDIN_FILENO);
-	dup2(fileout, STDOUT_FILENO);
-	close(fd[1]);
-	execute(argv[3], envp);
+    fileout = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+    if (fileout == -1)
+    {
+        ft_error("open infile");
+        close(fd[0]);
+        close(fd[1]);
+        exit(1);
+    }
+    dup2(fd[0], STDIN_FILENO);
+    dup2(fileout, STDOUT_FILENO);
+    close(fd[1]);
+    execute(argv[3], envp);
 }
 
-int	main(int argc, char **argv, char **envp)
+int     main(int argc, char **argv, char **envp)
 {
-	int		fd[2];
-	pid_t	pid1;
+    int         fd[2];
+    pid_t       pid1;
 
-	if (argc == 5)
-	{
-		if (pipe(fd) == -1)
-			ft_error("pipe");
-		pid1 = fork();
-		if (pid1 == -1)
-			ft_error("fork");
-		if (pid1 == 0)
-			child_process(argv, envp, fd);
-		waitpid(pid1, NULL, 0);
-		parent_process(argv, envp, fd);
-	}
-	else
-	{
-		ft_error("\033[31mError: Bad arguments\nEx: ./pipex <file1> <cmd1> <cmd2> <file2>\n\e[0m");
-	}
-	return (0);
+    if (argc == 5)
+    {
+        if (pipe(fd) == -1)
+            ft_error("pipe");
+        pid1 = fork();
+        if (pid1 == -1)
+            ft_error("fork");
+        if (pid1 == 0)
+            child_process(argv, envp, fd);
+        waitpid(pid1, NULL, 0);
+        parent_process(argv, envp, fd);
+    }
+    else
+    {
+        ft_error(
+            "\033[31mError: Bad arguments\nEx: ./pipex <file1> <cmd1> <cmd2> <file2>\n\e[0m"
+        );
+    }
+    return (0);
 }

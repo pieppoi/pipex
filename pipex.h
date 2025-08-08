@@ -13,23 +13,22 @@
 #ifndef PIPEX_H
 # define PIPEX_H
 
-# include <unistd.h>     // read, write, access, close, unlink, dup, dup2, execve, fork, pipe
-# include <fcntl.h>      // open
-# include <stdlib.h>     // malloc, free, exit
-# include <stdio.h>      // perror
-# include <string.h>     // strerror
-# include <sys/wait.h>   // wait, waitpid
+# include <unistd.h>
+/* read, write, access, close, unlink, dup, dup2, execve, fork, pipe */
+# include <fcntl.h>      /* open */
+# include <stdlib.h>     /* malloc, free, exit */
+# include <stdio.h>      /* perror */
+# include <string.h>     /* strerror */
+# include <sys/wait.h>   /* wait, waitpid */
 # include "libft/libft.h"
 
-//srs/pipex.c
-void	child_process(char **argv, char **envp, int *fd);
-void	parent_process(char **argv, char **envp, int *fd);
-
-//src/utils.c
-void	ft_error(const char *msg);
-char	*find_path(char *cmd, char **envp);
-void	execute(char *argv, char **envp);
-int		get_next_line(char **line);
-
+/* src/pipex.c */
+void    child_process(char **argv, char **envp, int *fd);
+void    parent_process(char **argv, char **envp, int *fd);
+/* src/utils.c */
+void    ft_error(const char *msg);
+char    *find_path(char *cmd, char **envp);
+void    execute(char *argv, char **envp);
+int     get_next_line(char **line);
 
 #endif
