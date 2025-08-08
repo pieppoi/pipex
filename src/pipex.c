@@ -67,7 +67,9 @@ int     main(int argc, char **argv, char **envp)
     }
     else
     {
-        ft_error("\033[31mError: Bad arguments\nEx: ./pipex <file1> <cmd1> <cmd2> <file2>\n\e[0m");
+        ft_error(
+            "\033[31mError: Bad arguments\nEx: ./pipex <file1> <cmd1> <cmd2> <file2>\n\e[0m"
+        );
     }
     return (0);
 }

@@ -12,12 +12,27 @@
 
 #include "../pipex.h"
 
+static void free_paths(char **paths)
+{
+    int i = 0;
+    while (paths[i])
+        free(paths[i++]);
+    free(paths);
+}
+
+static char *join_path(const char *dir, const char *cmd)
+{
+    char *part_path = ft_strjoin(dir, "/");
+    char *full_path = ft_strjoin(part_path, cmd);
+    free(part_path);
+    return full_path;
+}
+
 char    *find_path(char *cmd, char **envp)
 {
     char    **paths;
     char    *path;
     int     i;
-    char    *part_path;
 
     if (!cmd || !envp)
         return (0);
@@ -28,30 +43,30 @@ char    *find_path(char *cmd, char **envp)
     i = 0;
     while (paths[i])
     {
-        part_path = ft_strjoin(paths[i], "/");
-        path = ft_strjoin(part_path, cmd);
-        free(part_path);
+        path = join_path(paths[i], cmd);
         if (access(path, F_OK) == 0)
         {
-            int j = 0;
-            while (paths[j])
-                free(paths[j++]);
-            free(paths);
+            free_paths(paths);
             return (path);
         }
         free(path);
         i++;
     }
-    i = -1;
-    while (paths[++i])
-        free(paths[i]);
-    free(paths);
+    free_paths(paths);
     return (0);
 }
 
 void    ft_error(const char *msg)
 {
     perror(msg);
+}
+
+static void free_cmd(char **cmd)
+{
+    int i = 0;
+    while (cmd && cmd[i])
+        free(cmd[i++]);
+    free(cmd);
 }
 
 void    execute(char *argv, char **envp)
@@ -64,28 +79,20 @@ void    execute(char *argv, char **envp)
     cmd = ft_split(argv, ' ');
     if (!cmd || !cmd[0] || !*cmd[0])
     {
-        if (cmd) {
-            while (cmd[++i])
-                free(cmd[i]);
-            free(cmd);
-        }
+        free_cmd(cmd);
         ft_error("command not found");
         exit(1);
     }
     path = find_path(cmd[0], envp);
     if (!path)
     {
-        while (cmd[++i])
-            free(cmd[i]);
-        free(cmd);
+        free_cmd(cmd);
         ft_error("command not found");
         exit(127);
     }
     if (execve(path, cmd, envp) == -1)
     {
-        while (cmd[++i])
-            free(cmd[i]);
-        free(cmd);
+        free_cmd(cmd);
         free(path);
         ft_error("execve");
         exit(126);
