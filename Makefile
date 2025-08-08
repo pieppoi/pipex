@@ -6,12 +6,12 @@
 #    By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/08 14:11:48 by mkazuhik          #+#    #+#              #
-#    Updated: 2025/08/08 14:47:13 by mkazuhik         ###   ########.fr        #
+#    Updated: 2025/08/08 17:17:55 by mkazuhik         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = gcc
-SRCS = main.c pipex.c utils.c
+SRCS = src/main.c src/pipex.c src/error.c
 INCS = includes
 NAME = pipex
 OBJS = ${SRCS:.c=.o}
