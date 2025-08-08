@@ -10,31 +10,23 @@
 #                                                                              #
 # **************************************************************************** #
 
-CC = gcc
-SRCS = src/main.c src/pipex.c src/error.c
-INCS = includes
 NAME = pipex
-OBJS = ${SRCS:.c=.o}
-RM = rm -f
-LIBC = ar rc
-LIBR = ranlib
+CC = gcc
 CFLAGS = -Wall -Wextra -Werror
+SRCS = pipex.c
+OBJS = $(SRCS:.c=.o)
 
-.PHONY: all clean fclean re
+all: $(NAME)
 
-.c.o:
-	${CC} ${CFLAGS} -c $< -o ${<:.c=.o} -I ${INCS}
-
-${NAME}: ${OBJS}
-	${LIBC} ${NAME} ${OBJS}
-	${LIBR} ${NAME}
-
-all: ${NAME}
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
 
 clean:
-	${RM} ${OBJS}
+	rm -f $(OBJS)
 
 fclean: clean
-	${RM} ${NAME}
+	rm -f $(NAME)
 
 re: fclean all
+
+.PHONY: all clean fclean re
