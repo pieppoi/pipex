@@ -44,10 +44,9 @@ char	*find_path(char *cmd, char **envp)
 }
 
 /* A simple error displaying function. */
-void	ft_error(const char *msg, int code)
+void	ft_error(const char *msg)
 {
 	perror(msg);
-	exit(code);
 }
 
 /* Function that take the command and send it to find_path
@@ -66,10 +65,10 @@ void	execute(char *argv, char **envp)
 		while (cmd[++i])
 			free(cmd[i]);
 		free(cmd);
-		ft_error("command not found", 127);
+		ft_error("command not found");
 	}
 	if (execve(path, cmd, envp) == -1)
-		ft_error("execve", 1);
+		ft_error("execve");
 }
 
 /* Function that will read input from the terminal and return line. */
