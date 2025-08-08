@@ -6,7 +6,7 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 14:12:30 by mkazuhik          #+#    #+#             */
-/*   Updated: 2025/08/09 00:47:24 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/08/09 01:48:28 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <stdio.h>      // perror
 # include <string.h>     // strerror
 # include <sys/wait.h>   // wait, waitpid
+# include "libft/libft.h"
 
 //srs/pipex.c
 void	child_process(char **argv, char **envp, int *fd);

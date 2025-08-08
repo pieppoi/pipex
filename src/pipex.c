@@ -6,7 +6,7 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 09:54:02 by gcollet           #+#    #+#             */
-/*   Updated: 2025/08/09 00:28:41 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/08/09 01:46:43 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,16 @@
  a pipe and then close with the exec function */
 void	child_process(char **argv, char **envp, int *fd)
 {
-	int		filein;
+	int	filein;
 
 	filein = open(argv[1], O_RDONLY, 0777);
 	if (filein == -1)
+	{
 		ft_error("open infile");
+		close(fd[0]);
+		close(fd[1]);
+		exit(1);
+	}
 	dup2(fd[1], STDOUT_FILENO);
 	dup2(filein, STDIN_FILENO);
 	close(fd[0]);
@@ -31,11 +36,16 @@ void	child_process(char **argv, char **envp, int *fd)
  fileout and also close with the exec function */
 void	parent_process(char **argv, char **envp, int *fd)
 {
-	int		fileout;
+	int	fileout;
 
 	fileout = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (fileout == -1)
-		ft_error("open outfile");
+	{
+		ft_error("open infile");
+		close(fd[0]);
+		close(fd[1]);
+		exit(1);
+	}
 	dup2(fd[0], STDIN_FILENO);
 	dup2(fileout, STDOUT_FILENO);
 	close(fd[1]);
