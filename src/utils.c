@@ -66,9 +66,17 @@ void	execute(char *argv, char **envp)
 			free(cmd[i]);
 		free(cmd);
 		ft_error("command not found");
+		exit(127); // POSIX: command not found
 	}
 	if (execve(path, cmd, envp) == -1)
+	{
+		while (cmd[++i])
+			free(cmd[i]);
+		free(cmd);
+		free(path);
 		ft_error("execve");
+		exit(126); // POSIX: command found but not executable
+	}
 }
 
 /* Function that will read input from the terminal and return line. */
