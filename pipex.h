@@ -29,5 +29,9 @@ void	ft_error(const char *msg);
 char	*find_path(char *cmd, char **envp);
 void	execute(char *argv, char **envp);
 int		get_next_line(char **line);
+// プロトタイプ宣言追加
+void	free_paths(char **paths);
+char	*join_path(const char *dir, const char *cmd);
+void	free_cmd(char **cmd);
 
 #endif
