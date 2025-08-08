@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gcollet <gcollet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 09:54:02 by gcollet           #+#    #+#             */
-/*   Updated: 2022/02/06 13:47:21 by gcollet          ###   ########.fr       */
+/*   Updated: 2025/08/09 00:28:41 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/pipex.h"
+#include "../pipex.h"
 
 /* Child process that run inside a fork, take the filein, put the output inside
  a pipe and then close with the exec function */
