@@ -23,7 +23,7 @@ LIBR = ranlib
 .PHONY: all clean fclean re
 
 .c.o:
-	${CC} ${CFLAGS} -c $< -o ${<:.c=.o} -I ${INCS}
+	${CC} ${CFLAGS} -c $< -o ${<:.c=.o}
 
 ${NAME}: ${OBJS}
 	${MAKE} -C ./libft
