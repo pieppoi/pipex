@@ -6,14 +6,12 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 09:54:02 by gcollet           #+#    #+#             */
-/*   Updated: 2025/08/09 01:46:43 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/08/09 02:27:15 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex.h"
 
-/* Child process that run inside a fork, take the filein, put the output inside
- a pipe and then close with the exec function */
 void	child_process(char **argv, char **envp, int *fd)
 {
 	int	filein;
@@ -32,8 +30,6 @@ void	child_process(char **argv, char **envp, int *fd)
 	execute(argv[2], envp);
 }
 
-/* Parent process that take the data from the pipe, change the output for the
- fileout and also close with the exec function */
 void	parent_process(char **argv, char **envp, int *fd)
 {
 	int	fileout;
@@ -52,8 +48,6 @@ void	parent_process(char **argv, char **envp, int *fd)
 	execute(argv[3], envp);
 }
 
-/* Main function that run the child and parent process or display an error
- message if arguments are wrong */
 int	main(int argc, char **argv, char **envp)
 {
 	int		fd[2];
