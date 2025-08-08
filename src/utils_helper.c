@@ -1,16 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils_helper.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/04 10:26:01 by gcollet           #+#    #+#             */
-/*   Updated: 2025/08/09 02:47:09 by mkazuhik         ###   ########.fr       */
+/*   Created: 2024/06/10 00:00:00 by mkazuhik          #+#    #+#             */
+/*   Updated: 2024/06/10 00:00:00 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex.h"
+#include <stdlib.h>
 
 void	free_paths(char **paths)
 {
@@ -33,34 +34,6 @@ char	*join_path(const char *dir, const char *cmd)
 	return (full_path);
 }
 
-char	*find_path(char *cmd, char **envp)
-{
-	char	**paths;
-	char	*path;
-	int		i;
-
-	if (!cmd || !envp)
-		return (0);
-	i = 0;
-	while (ft_strnstr(envp[i], "PATH", 4) == 0)
-		i++;
-	paths = ft_split(envp[i] + 5, ':');
-	i = 0;
-	while (paths[i])
-	{
-		path = join_path(paths[i], cmd);
-		if (access(path, F_OK) == 0)
-		{
-			free_paths(paths);
-			return (path);
-		}
-		free(path);
-		i++;
-	}
-	free_paths(paths);
-	return (0);
-}
-
 void	free_cmd(char **cmd)
 {
 	int	i;
@@ -69,4 +42,4 @@ void	free_cmd(char **cmd)
 	while (cmd && cmd[i])
 		free(cmd[i++]);
 	free(cmd);
-}
+} 
