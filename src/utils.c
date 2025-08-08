@@ -6,122 +6,129 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/04 10:26:01 by gcollet           #+#    #+#             */
-/*   Updated: 2025/08/09 02:27:00 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/08/09 02:47:09 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex.h"
 
-static void free_paths(char **paths)
+static void	free_paths(char **paths)
 {
-    int i = 0;
-    while (paths[i])
-        free(paths[i++]);
-    free(paths);
+	int	i;
+
+	i = 0;
+	while (paths[i])
+		free(paths[i++]);
+	free(paths);
 }
 
-static char *join_path(const char *dir, const char *cmd)
+static char	*join_path(const char *dir, const char *cmd)
 {
-    char *part_path = ft_strjoin(dir, "/");
-    char *full_path = ft_strjoin(part_path, cmd);
-    free(part_path);
-    return full_path;
+	char	*part_path;
+	char	*full_path;
+
+	part_path = ft_strjoin(dir, "/");
+	full_path = ft_strjoin(part_path, cmd);
+	free(part_path);
+	return (full_path);
 }
 
-char    *find_path(char *cmd, char **envp)
+char	*find_path(char *cmd, char **envp)
 {
-    char    **paths;
-    char    *path;
-    int     i;
+	char	**paths;
+	char	*path;
+	int		i;
 
-    if (!cmd || !envp)
-        return (0);
-    i = 0;
-    while (ft_strnstr(envp[i], "PATH", 4) == 0)
-        i++;
-    paths = ft_split(envp[i] + 5, ':');
-    i = 0;
-    while (paths[i])
-    {
-        path = join_path(paths[i], cmd);
-        if (access(path, F_OK) == 0)
-        {
-            free_paths(paths);
-            return (path);
-        }
-        free(path);
-        i++;
-    }
-    free_paths(paths);
-    return (0);
+	if (!cmd || !envp)
+		return (0);
+	i = 0;
+	while (ft_strnstr(envp[i], "PATH", 4) == 0)
+		i++;
+	paths = ft_split(envp[i] + 5, ':');
+	i = 0;
+	while (paths[i])
+	{
+		path = join_path(paths[i], cmd);
+		if (access(path, F_OK) == 0)
+		{
+			free_paths(paths);
+			return (path);
+		}
+		free(path);
+		i++;
+	}
+	free_paths(paths);
+	return (0);
 }
 
-void    ft_error(const char *msg)
+void	ft_error(const char *msg)
 {
-    perror(msg);
+	perror(msg);
 }
 
-static void free_cmd(char **cmd)
+static void	free_cmd(char **cmd)
 {
-    int i = 0;
-    while (cmd && cmd[i])
-        free(cmd[i++]);
-    free(cmd);
+	int	i;
+
+	i = 0;
+	while (cmd && cmd[i])
+		free(cmd[i++]);
+	free(cmd);
 }
 
-void    execute(char *argv, char **envp)
+void	execute(char *argv, char **envp)
 {
-    char    **cmd;
-    int     i;
-    char    *path;
+	char	**cmd;
+	int		i;
+	char	*path;
 
-    i = -1;
-    cmd = ft_split(argv, ' ');
-    if (!cmd || !cmd[0] || !*cmd[0])
-    {
-        free_cmd(cmd);
-        ft_error("command not found");
-        exit(1);
-    }
-    path = find_path(cmd[0], envp);
-    if (!path)
-    {
-        free_cmd(cmd);
-        ft_error("command not found");
-        exit(127);
-    }
-    if (execve(path, cmd, envp) == -1)
-    {
-        free_cmd(cmd);
-        free(path);
-        ft_error("execve");
-        exit(126);
-    }
+	i = -1;
+	cmd = ft_split(argv, ' ');
+	if (!cmd || !cmd[0] || !*cmd[0])
+	{
+		free_cmd(cmd);
+		ft_error("command not found");
+		exit(1);
+	}
+	path = find_path(cmd[0], envp);
+	if (!path)
+	{
+		free_cmd(cmd);
+		ft_error("command not found");
+		exit(127);
+	}
+	if (execve(path, cmd, envp) == -1)
+	{
+		free_cmd(cmd);
+		free(path);
+		ft_error("execve");
+		exit(126);
+	}
 }
 
-int     get_next_line(char **line)
+int	get_next_line(char **line)
 {
-    char    *buffer;
-    int     i;
-    int     r;
-    char    c;
+	char	*buffer;
+	int		i;
+	int		r;
+	char	c;
 
-    i = 0;
-    r = 0;
-    buffer = (char *)malloc(10000);
-    if (!buffer)
-        return (-1);
-    r = read(0, &c, 1);
-    while (r && c != '\n' && c != '\0')
-    {
-        if (c != '\n' && c != '\0')
-            buffer[i] = c;
-        i++;
-        r = read(0, &c, 1);
-    }
-    buffer[i] = '\n';
-    buffer[++i] = '\0';
-    *line = buffer;
-    free(buffer);
-    return (r);
+	i = 0;
+	r = 0;
+	buffer = (char *)malloc(10000);
+	if (!buffer)
+		return (-1);
+	r = read(0, &c, 1);
+	while (r && c != '\n' && c != '\0')
+	{
+		if (c != '\n' && c != '\0')
+			buffer[i] = c;
+		i++;
+		r = read(0, &c, 1);
+	}
+	buffer[i] = '\n';
+	buffer[++i] = '\0';
+	*line = buffer;
+	free(buffer);
+	return (r);
 }
