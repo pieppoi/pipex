@@ -19,7 +19,7 @@ void	child_process(char **argv, char **envp, int *fd)
 	filein = open(argv[1], O_RDONLY, 0777);
 	if (filein == -1)
 	{
-		ft_error("open infile");
+		perror("open infile");
 		close(fd[0]);
 		close(fd[1]);
 		exit(1);
@@ -81,9 +81,7 @@ int	main(int argc, char **argv, char **envp)
 	close(fd[1]);
 	waitpid(pid1, &status1, 0);
 	waitpid(pid2, &status2, 0);
-	if (WIFEXITED(status1) && WEXITSTATUS(status1) != 0)
-		return (WEXITSTATUS(status1));
-	else if (WIFEXITED(status2))
+	if (WIFEXITED(status2))
 		return (WEXITSTATUS(status2));
 	else if (WIFEXITED(status1))
 		return (WEXITSTATUS(status1));

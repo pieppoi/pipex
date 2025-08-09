@@ -24,6 +24,7 @@
 void	child_process(char **argv, char **envp, int *fd);
 void	parent_process(char **argv, char **envp, int *fd);
 void	ft_error(const char *msg);
+void	ft_error_exit(const char *msg, int exit_code);
 char	*find_path(char *cmd, char **envp);
 void	execute(char *argv, char **envp);
 int		get_next_line(char **line);

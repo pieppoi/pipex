@@ -20,15 +20,13 @@ static char	*get_cmd_path(char *argv, char **envp, char ***cmd)
 	if (!*cmd || !(*cmd)[0] || !*(*cmd)[0])
 	{
 		free_cmd(*cmd);
-		ft_error("command not found");
-		exit(1);
+		ft_error_exit("command not found", 127);
 	}
 	path = find_path((*cmd)[0], envp);
 	if (!path)
 	{
 		free_cmd(*cmd);
-		ft_error("command not found");
-		exit(127);
+		ft_error_exit("command not found", 127);
 	}
 	return (path);
 }
@@ -43,7 +41,6 @@ void	execute(char *argv, char **envp)
 	{
 		free_cmd(cmd);
 		free(path);
-		ft_error("execve");
-		exit(126);
+		ft_error_exit("execve", 126);
 	}
 }
