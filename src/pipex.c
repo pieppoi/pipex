@@ -27,6 +27,8 @@ void	child_process(char **argv, char **envp, int *fd)
 	dup2(fd[1], STDOUT_FILENO);
 	dup2(filein, STDIN_FILENO);
 	close(fd[0]);
+	close(fd[1]);
+	close(filein);
 	execute(argv[2], envp);
 }
 
@@ -44,7 +46,9 @@ void	parent_process(char **argv, char **envp, int *fd)
 	}
 	dup2(fd[0], STDIN_FILENO);
 	dup2(fileout, STDOUT_FILENO);
+	close(fd[0]);
 	close(fd[1]);
+	close(fileout);
 	execute(argv[3], envp);
 }
 
@@ -52,6 +56,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	int		fd[2];
 	pid_t	pid1;
+	pid_t	pid2;
 
 	if (argc == 5)
 	{
@@ -62,8 +67,15 @@ int	main(int argc, char **argv, char **envp)
 			ft_error("fork");
 		if (pid1 == 0)
 			child_process(argv, envp, fd);
+		pid2 = fork();
+		if (pid2 == -1)
+			ft_error("fork");
+		if (pid2 == 0)
+			parent_process(argv, envp, fd);
+		close(fd[0]);
+		close(fd[1]);
 		waitpid(pid1, NULL, 0);
-		parent_process(argv, envp, fd);
+		waitpid(pid2, NULL, 0);
 	}
 	else
 	{
