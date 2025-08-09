@@ -33,18 +33,11 @@ char	*join_path(const char *dir, const char *cmd)
 	return (full_path);
 }
 
-char	*find_path(char *cmd, char **envp)
+static char	*search_in_paths(char **paths, char *cmd)
 {
-	char	**paths;
 	char	*path;
 	int		i;
 
-	if (!cmd || !envp)
-		return (0);
-	i = 0;
-	while (ft_strnstr(envp[i], "PATH", 4) == 0)
-		i++;
-	paths = ft_split(envp[i] + 5, ':');
 	i = 0;
 	while (paths[i])
 	{
@@ -59,6 +52,22 @@ char	*find_path(char *cmd, char **envp)
 	}
 	free_paths(paths);
 	return (0);
+}
+
+char	*find_path(char *cmd, char **envp)
+{
+	char	**paths;
+	int		i;
+
+	if (!cmd || !envp)
+		return (0);
+	i = 0;
+	while (envp[i] && ft_strnstr(envp[i], "PATH", 4) == 0)
+		i++;
+	if (!envp[i])
+		return (0);
+	paths = ft_split(envp[i] + 5, ':');
+	return (search_in_paths(paths, cmd));
 }
 
 void	free_cmd(char **cmd)

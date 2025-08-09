@@ -41,6 +41,5 @@ int	get_next_line(char **line)
 	buffer[i] = '\n';
 	buffer[++i] = '\0';
 	*line = buffer;
-	free(buffer);
 	return (r);
 }
