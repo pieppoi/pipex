@@ -6,7 +6,7 @@
 /*   By: mkazuhik <mkazuhik@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 09:54:02 by gcollet           #+#    #+#             */
-/*   Updated: 2025/08/09 02:41:51 by mkazuhik         ###   ########.fr       */
+/*   Updated: 2025/08/09 11:29:20 by mkazuhik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,7 @@ int	main(int argc, char **argv, char **envp)
 
 	if (argc != 5)
 	{
-		ft_putstr_fd("\033[31mError: Bad arguments\nEx: \
-			 ./pipex <file1> <cmd1> <cmd2> <file2>\n\033[0m", 2);
+		ft_putstr_fd("\033[31m./pipex infile cmd cmd outfile", 2);
 		return (1);
 	}
 	if (pipe(fd) == -1)
