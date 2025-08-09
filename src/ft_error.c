@@ -17,3 +17,9 @@ void	ft_error(const char *msg)
 	perror(msg);
 	exit(1);
 }
+
+void	ft_error_exit(const char *msg, int exit_code)
+{
+	perror(msg);
+	exit(exit_code);
+}
