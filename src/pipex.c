@@ -58,25 +58,25 @@ static void	init_pipe(int *fd)
 		ft_error("pipe");
 }
 
-static void	create_processes(char **argv, char **envp, int *fd, pid_t *pid1, pid_t *pid2)
+static int	create_processes(char **argv, char **envp, int *fd)
 {
-	*pid1 = fork();
-	if (*pid1 == -1)
-		ft_error("fork");
-	if (*pid1 == 0)
-		child_process(argv, envp, fd);
-	*pid2 = fork();
-	if (*pid2 == -1)
-		ft_error("fork");
-	if (*pid2 == 0)
-		parent_process(argv, envp, fd);
-}
-
-static int	wait_for_processes(pid_t pid1, pid_t pid2)
-{
+	pid_t	pid1;
+	pid_t	pid2;
 	int		status1;
 	int		status2;
 
+	pid1 = fork();
+	if (pid1 == -1)
+		ft_error("fork");
+	if (pid1 == 0)
+		child_process(argv, envp, fd);
+	pid2 = fork();
+	if (pid2 == -1)
+		ft_error("fork");
+	if (pid2 == 0)
+		parent_process(argv, envp, fd);
+	close(fd[0]);
+	close(fd[1]);
 	waitpid(pid1, &status1, 0);
 	waitpid(pid2, &status2, 0);
 	if (WIFEXITED(status2))
@@ -89,8 +89,6 @@ static int	wait_for_processes(pid_t pid1, pid_t pid2)
 int	main(int argc, char **argv, char **envp)
 {
 	int		fd[2];
-	pid_t	pid1;
-	pid_t	pid2;
 
 	if (argc != 5)
 	{
@@ -98,8 +96,5 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	}
 	init_pipe(fd);
-	create_processes(argv, envp, fd, &pid1, &pid2);
-	close(fd[0]);
-	close(fd[1]);
-	return (wait_for_processes(pid1, pid2));
+	return (create_processes(argv, envp, fd));
 }
