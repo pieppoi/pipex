@@ -57,6 +57,8 @@ int	main(int argc, char **argv, char **envp)
 	int		fd[2];
 	pid_t	pid1;
 	pid_t	pid2;
+	int		status1;
+	int		status2;
 
 	if (argc == 5)
 	{
@@ -74,13 +76,18 @@ int	main(int argc, char **argv, char **envp)
 			parent_process(argv, envp, fd);
 		close(fd[0]);
 		close(fd[1]);
-		waitpid(pid1, NULL, 0);
-		waitpid(pid2, NULL, 0);
+		waitpid(pid1, &status1, 0);
+		waitpid(pid2, &status2, 0);
+		if (WIFEXITED(status2))
+			return (WEXITSTATUS(status2));
+		else if (WIFEXITED(status1))
+			return (WEXITSTATUS(status1));
+		return (1);
 	}
 	else
 	{
 		ft_error("\033[31mError: Bad arguments\nEx: \
 			 ./pipex <file1> <cmd1> <cmd2> <file2>\n\e[0m");
+		return (1);
 	}
-	return (0);
 }
