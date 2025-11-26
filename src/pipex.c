@@ -12,18 +12,8 @@
 
 #include "../pipex.h"
 
-static void	child_process(char **argv, char **envp, int *fd)
+static void	child_process(char **argv, char **envp, int *fd, int infile)
 {
-	int	infile;
-
-	infile = open(argv[1], O_RDONLY);
-	if (infile == -1)
-	{
-		perror(argv[1]);
-		close(fd[0]);
-		close(fd[1]);
-		exit(1);
-	}
 	if (dup2(infile, STDIN_FILENO) == -1 || dup2(fd[1], STDOUT_FILENO) == -1)
 		ft_error("dup2");
 	close(infile);
@@ -52,22 +42,31 @@ static void	parent_process(char **argv, char **envp, int *fd)
 	execute(argv[3], envp);
 }
 
-static int	wait_children(pid_t pid1, pid_t pid2)
+static int	wait_children(pid_t pid1, pid_t pid2, int infile_error)
 {
 	int	status1;
 	int	status2;
+	int	exit_code;
 
-	waitpid(pid1, &status1, 0);
+	if (pid1 > 0)
+		waitpid(pid1, &status1, 0);
 	waitpid(pid2, &status2, 0);
 	if (WIFEXITED(status2))
-		return (WEXITSTATUS(status2));
-	if (WIFEXITED(status1))
-		return (WEXITSTATUS(status1));
-	if (WIFSIGNALED(status2))
-		return (128 + WTERMSIG(status2));
-	if (WIFSIGNALED(status1))
-		return (128 + WTERMSIG(status1));
-	return (1);
+		exit_code = WEXITSTATUS(status2);
+	else if (WIFSIGNALED(status2))
+		exit_code = 128 + WTERMSIG(status2);
+	else
+		exit_code = 1;
+	if (pid1 <= 0 && infile_error && exit_code == 0)
+		return (1);
+	if (pid2 <= 0 && pid1 > 0)
+	{
+		if (WIFEXITED(status1))
+			return (WEXITSTATUS(status1));
+		if (WIFSIGNALED(status1))
+			return (128 + WTERMSIG(status1));
+	}
+	return (exit_code);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -75,19 +74,30 @@ int	main(int argc, char **argv, char **envp)
 	int		fd[2];
 	pid_t	pid1;
 	pid_t	pid2;
+	int		infile;
+	int		infile_error;
 
 	if (argc != 5)
 	{
 		ft_putstr_fd("Error\n", 2);
 		return (1);
 	}
+	infile = open(argv[1], O_RDONLY);
+	infile_error = (infile == -1);
+	if (infile_error)
+		perror(argv[1]);
 	if (pipe(fd) == -1)
 		ft_error("pipe");
-	pid1 = fork();
-	if (pid1 == -1)
-		ft_error("fork");
-	if (pid1 == 0)
-		child_process(argv, envp, fd);
+	pid1 = -1;
+	if (!infile_error)
+	{
+		pid1 = fork();
+		if (pid1 == -1)
+			ft_error("fork");
+		if (pid1 == 0)
+			child_process(argv, envp, fd, infile);
+		close(infile);
+	}
 	pid2 = fork();
 	if (pid2 == -1)
 		ft_error("fork");
@@ -95,5 +105,5 @@ int	main(int argc, char **argv, char **envp)
 		parent_process(argv, envp, fd);
 	close(fd[0]);
 	close(fd[1]);
-	return (wait_children(pid1, pid2));
+	return (wait_children(pid1, pid2, infile_error));
 }

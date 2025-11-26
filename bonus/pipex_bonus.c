@@ -10,6 +10,7 @@ typedef struct s_pipex
 	int	outfile;
 	int	cmd_start;
 	int	cmd_count;
+	int	infile_error;
 }	t_pipex;
 
 static int	is_here_doc(char **argv)
@@ -63,17 +64,31 @@ static int	create_here_doc(char *limiter)
 	return (pipefd[0]);
 }
 
+static int	create_dummy_input(void)
+{
+	int	pipefd[2];
+
+	if (pipe(pipefd) == -1)
+		ft_error("pipe");
+	close(pipefd[1]);
+	return (pipefd[0]);
+}
+
 static void	open_files(t_pipex *px)
 {
 	int	flags;
 
+	px->infile_error = 0;
 	if (px->here_doc)
 		px->infile = create_here_doc(px->argv[2]);
 	else
 	{
 		px->infile = open(px->argv[1], O_RDONLY);
 		if (px->infile < 0)
-			ft_error(px->argv[1]);
+		{
+			px->infile_error = 1;
+			perror(px->argv[1]);
+		}
 	}
 	flags = O_WRONLY | O_CREAT;
 	if (px->here_doc)
@@ -83,7 +98,8 @@ static void	open_files(t_pipex *px)
 	px->outfile = open(px->argv[px->argc - 1], flags, 0644);
 	if (px->outfile < 0)
 	{
-		close(px->infile);
+		if (px->infile >= 0)
+			close(px->infile);
 		ft_error(px->argv[px->argc - 1]);
 	}
 }
@@ -150,6 +166,13 @@ static int	execute_pipeline(t_pipex *px)
 	i = 0;
 	while (i < px->cmd_count)
 	{
+		if (i == 0 && px->infile < 0 && !px->here_doc)
+		{
+			pids[i] = -1;
+			prev_fd = create_dummy_input();
+			i++;
+			continue ;
+		}
 		if (i < px->cmd_count - 1 && pipe(pipefd) == -1)
 			ft_error("pipe");
 		pids[i] = launch_process(px, prev_fd,
@@ -170,17 +193,22 @@ static int	execute_pipeline(t_pipex *px)
 	i = 0;
 	while (i < px->cmd_count)
 	{
-		waitpid(pids[i], &status, 0);
-		if (pids[i] == pids[px->cmd_count - 1])
+		if (pids[i] > 0)
 		{
-			if (WIFEXITED(status))
-				exit_code = WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
-				exit_code = 128 + WTERMSIG(status);
+			waitpid(pids[i], &status, 0);
+			if (pids[i] == pids[px->cmd_count - 1])
+			{
+				if (WIFEXITED(status))
+					exit_code = WEXITSTATUS(status);
+				else if (WIFSIGNALED(status))
+					exit_code = 128 + WTERMSIG(status);
+			}
 		}
 		i++;
 	}
 	free(pids);
+	if (px->infile_error && px->cmd_count == 1)
+		return (1);
 	return (exit_code);
 }
 
