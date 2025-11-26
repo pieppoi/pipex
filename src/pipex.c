@@ -14,57 +14,75 @@
 
 static void	child_process(char **argv, char **envp, int *fd)
 {
-	int	filein;
+	int	infile;
 
-	filein = open(argv[1], O_RDONLY);
-	if (filein == -1)
+	infile = open(argv[1], O_RDONLY);
+	if (infile == -1)
 	{
 		perror("open infile");
 		close(fd[0]);
 		close(fd[1]);
 		exit(1);
 	}
-	if (dup2(fd[1], STDOUT_FILENO) == -1 || dup2(filein, STDIN_FILENO) == -1)
+	if (dup2(infile, STDIN_FILENO) == -1 || dup2(fd[1], STDOUT_FILENO) == -1)
 		ft_error("dup2");
+	close(infile);
 	close(fd[0]);
 	close(fd[1]);
-	close(filein);
 	execute(argv[2], envp);
 }
 
 static void	parent_process(char **argv, char **envp, int *fd)
 {
-	int	fileout;
+	int	outfile;
 
-	fileout = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fileout == -1)
+	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (outfile == -1)
 	{
 		perror("open outfile");
 		close(fd[0]);
 		close(fd[1]);
 		exit(1);
 	}
-	if (dup2(fd[0], STDIN_FILENO) == -1 || dup2(fileout, STDOUT_FILENO) == -1)
+	if (dup2(fd[0], STDIN_FILENO) == -1 || dup2(outfile, STDOUT_FILENO) == -1)
 		ft_error("dup2");
+	close(outfile);
 	close(fd[0]);
 	close(fd[1]);
-	close(fileout);
 	execute(argv[3], envp);
 }
 
-static void	init_pipe(int *fd)
+static int	wait_children(pid_t pid1, pid_t pid2)
 {
-	if (pipe(fd) == -1)
-		ft_error("pipe");
+	int	status1;
+	int	status2;
+
+	waitpid(pid1, &status1, 0);
+	waitpid(pid2, &status2, 0);
+	if (WIFEXITED(status2))
+		return (WEXITSTATUS(status2));
+	if (WIFEXITED(status1))
+		return (WEXITSTATUS(status1));
+	if (WIFSIGNALED(status2))
+		return (128 + WTERMSIG(status2));
+	if (WIFSIGNALED(status1))
+		return (128 + WTERMSIG(status1));
+	return (1);
 }
 
-static int	create_processes(char **argv, char **envp, int *fd)
+int	main(int argc, char **argv, char **envp)
 {
+	int		fd[2];
 	pid_t	pid1;
 	pid_t	pid2;
-	int		status1;
-	int		status2;
 
+	if (argc != 5)
+	{
+		ft_putstr_fd("Error\n", 2);
+		return (1);
+	}
+	if (pipe(fd) == -1)
+		ft_error("pipe");
 	pid1 = fork();
 	if (pid1 == -1)
 		ft_error("fork");
@@ -77,24 +95,5 @@ static int	create_processes(char **argv, char **envp, int *fd)
 		parent_process(argv, envp, fd);
 	close(fd[0]);
 	close(fd[1]);
-	waitpid(pid1, &status1, 0);
-	waitpid(pid2, &status2, 0);
-	if (WIFEXITED(status2))
-		return (WEXITSTATUS(status2));
-	else if (WIFEXITED(status1))
-		return (WEXITSTATUS(status1));
-	return (1);
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	int	fd[2];
-
-	if (argc != 5)
-	{
-		ft_putstr_fd("Error\n", 2);
-		return (1);
-	}
-	init_pipe(fd);
-	return (create_processes(argv, envp, fd));
+	return (wait_children(pid1, pid2));
 }
