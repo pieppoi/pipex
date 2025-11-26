@@ -15,7 +15,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 RM = rm -f
 
-COMMON_SRCS = src/execute.c src/utils.c src/get_next_line.c src/ft_error.c
+COMMON_SRCS = src/pipex_core.c src/execute.c src/utils.c src/get_next_line.c src/ft_error.c
 MANDATORY_SRCS = src/pipex.c ${COMMON_SRCS}
 BONUS_SRCS = bonus/pipex_bonus.c ${COMMON_SRCS}
 
