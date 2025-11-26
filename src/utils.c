@@ -39,10 +39,10 @@ static char	*search_in_paths(char **paths, char *cmd)
 	int		i;
 
 	i = 0;
-	while (paths[i])
+	while (paths && paths[i])
 	{
 		path = join_path(paths[i], cmd);
-		if (access(path, F_OK) == 0)
+		if (access(path, X_OK) == 0)
 		{
 			free_paths(paths);
 			return (path);
@@ -67,6 +67,8 @@ char	*find_path(char *cmd, char **envp)
 	if (!envp[i])
 		return (0);
 	paths = ft_split(envp[i] + 5, ':');
+	if (!paths)
+		return (0);
 	return (search_in_paths(paths, cmd));
 }
 

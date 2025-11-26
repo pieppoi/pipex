@@ -12,11 +12,11 @@
 
 #include "../pipex.h"
 
-void	child_process(char **argv, char **envp, int *fd)
+static void	child_process(char **argv, char **envp, int *fd)
 {
 	int	filein;
 
-	filein = open(argv[1], O_RDONLY, 0777);
+	filein = open(argv[1], O_RDONLY);
 	if (filein == -1)
 	{
 		perror("open infile");
@@ -24,28 +24,28 @@ void	child_process(char **argv, char **envp, int *fd)
 		close(fd[1]);
 		exit(1);
 	}
-	dup2(fd[1], STDOUT_FILENO);
-	dup2(filein, STDIN_FILENO);
+	if (dup2(fd[1], STDOUT_FILENO) == -1 || dup2(filein, STDIN_FILENO) == -1)
+		ft_error("dup2");
 	close(fd[0]);
 	close(fd[1]);
 	close(filein);
 	execute(argv[2], envp);
 }
 
-void	parent_process(char **argv, char **envp, int *fd)
+static void	parent_process(char **argv, char **envp, int *fd)
 {
 	int	fileout;
 
-	fileout = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	fileout = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fileout == -1)
 	{
-		ft_error("open outfile");
+		perror("open outfile");
 		close(fd[0]);
 		close(fd[1]);
 		exit(1);
 	}
-	dup2(fd[0], STDIN_FILENO);
-	dup2(fileout, STDOUT_FILENO);
+	if (dup2(fd[0], STDIN_FILENO) == -1 || dup2(fileout, STDOUT_FILENO) == -1)
+		ft_error("dup2");
 	close(fd[0]);
 	close(fd[1]);
 	close(fileout);
@@ -88,7 +88,7 @@ static int	create_processes(char **argv, char **envp, int *fd)
 
 int	main(int argc, char **argv, char **envp)
 {
-	int		fd[2];
+	int	fd[2];
 
 	if (argc != 5)
 	{
