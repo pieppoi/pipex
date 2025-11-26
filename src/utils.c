@@ -62,7 +62,7 @@ char	*find_path(char *cmd, char **envp)
 	if (!cmd || !envp)
 		return (0);
 	i = 0;
-	while (envp[i] && ft_strnstr(envp[i], "PATH", 4) == 0)
+	while (envp[i] && ft_strncmp(envp[i], "PATH=", 5) != 0)
 		i++;
 	if (!envp[i])
 		return (0);

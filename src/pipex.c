@@ -42,7 +42,7 @@ static void	parent_process(char **argv, char **envp, int *fd)
 	execute(argv[3], envp);
 }
 
-static int	wait_children(pid_t pid1, pid_t pid2, int infile_error)
+static int	wait_children(pid_t pid1, pid_t pid2)
 {
 	int	status1;
 	int	status2;
@@ -57,8 +57,6 @@ static int	wait_children(pid_t pid1, pid_t pid2, int infile_error)
 		exit_code = 128 + WTERMSIG(status2);
 	else
 		exit_code = 1;
-	if (pid1 <= 0 && infile_error && exit_code == 0)
-		return (1);
 	if (pid2 <= 0 && pid1 > 0)
 	{
 		if (WIFEXITED(status1))
@@ -105,5 +103,5 @@ int	main(int argc, char **argv, char **envp)
 		parent_process(argv, envp, fd);
 	close(fd[0]);
 	close(fd[1]);
-	return (wait_children(pid1, pid2, infile_error));
+	return (wait_children(pid1, pid2));
 }
