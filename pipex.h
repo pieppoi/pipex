@@ -29,6 +29,5 @@ int		get_next_line(char **line);
 void	free_paths(char **paths);
 char	*join_path(const char *dir, const char *cmd);
 void	free_cmd(char **cmd);
-int		pipex_run(int argc, char **argv, char **envp);
 
 #endif
