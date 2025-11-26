@@ -13,24 +13,35 @@
 NAME = pipex
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-SRCS = src/execute.c src/pipex.c src/utils.c src/get_next_line.c src/ft_error.c
-OBJS = ${SRCS:.c=.o}
 RM = rm -f
+
+COMMON_SRCS = src/execute.c src/utils.c src/get_next_line.c src/ft_error.c
+MANDATORY_SRCS = src/pipex.c ${COMMON_SRCS}
+BONUS_SRCS = bonus/pipex_bonus.c ${COMMON_SRCS}
+
+ifdef BONUS
+SRCS = ${BONUS_SRCS}
+else
+SRCS = ${MANDATORY_SRCS}
+endif
+
+OBJS = ${SRCS:.c=.o}
 
 all: ${NAME}
 
-${NAME}: ${OBJS}
+bonus:
+	${MAKE} BONUS=1 all
 
-.c.o:
+%.o: %.c
 	${CC} ${CFLAGS} -c $< -o $@
 
 ${NAME}: ${OBJS}
 	${MAKE} -C libft
-	${CC} ${OBJS} libft/libft.a -o ${NAME}
+	${CC} ${CFLAGS} ${OBJS} libft/libft.a -o ${NAME}
 
 clean:
-	${RM} ${OBJS}
-	$(MAKE) clean -C libft
+	${RM} ${MANDATORY_SRCS:.c=.o} ${BONUS_SRCS:.c=.o}
+	${MAKE} clean -C libft
 
 fclean: clean
 	${RM} ${NAME}
@@ -38,4 +49,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all bonus clean fclean re
