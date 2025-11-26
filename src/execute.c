@@ -11,6 +11,32 @@
 /* ************************************************************************** */
 
 #include "../pipex.h"
+#include <errno.h>
+
+static void	exit_empty_command(char ***cmd)
+{
+	ft_putendl_fd("pipex: : command not found", STDERR_FILENO);
+	free_cmd(*cmd);
+	exit(127);
+}
+
+static void	exit_cmd_not_found(char **cmd)
+{
+	ft_putstr_fd("pipex: command not found: ", STDERR_FILENO);
+	ft_putendl_fd(cmd[0], STDERR_FILENO);
+	free_cmd(cmd);
+	exit(127);
+}
+
+static void	exit_with_perror(char **cmd, int exit_code)
+{
+	if (cmd && cmd[0])
+		perror(cmd[0]);
+	else
+		perror("pipex");
+	free_cmd(cmd);
+	exit(exit_code);
+}
 
 static char	*dup_cmd_path(char *cmd)
 {
@@ -27,24 +53,21 @@ static char	*get_cmd_path(char *argv, char **envp, char ***cmd)
 	char	*path;
 
 	*cmd = ft_split(argv, ' ');
-	if (!*cmd || !(*cmd)[0] || !*(*cmd)[0])
-	{
-		free_cmd(*cmd);
-		ft_error_exit("command not found", 127);
-	}
+	if (!*cmd)
+		ft_error("malloc");
+	if (!(*cmd)[0] || !(*cmd)[0][0])
+		exit_empty_command(cmd);
 	if (ft_strchr((*cmd)[0], '/'))
 	{
-		if (access((*cmd)[0], X_OK) == 0)
-			return (dup_cmd_path((*cmd)[0]));
-		free_cmd(*cmd);
-		ft_error_exit("command not found", 127);
+		if (access((*cmd)[0], F_OK) != 0)
+			exit_with_perror(*cmd, 127);
+		if (access((*cmd)[0], X_OK) != 0)
+			exit_with_perror(*cmd, 126);
+		return (dup_cmd_path((*cmd)[0]));
 	}
 	path = find_path((*cmd)[0], envp);
 	if (!path)
-	{
-		free_cmd(*cmd);
-		ft_error_exit("command not found", 127);
-	}
+		exit_cmd_not_found(*cmd);
 	return (path);
 }
 
@@ -56,8 +79,10 @@ void	execute(char *argv, char **envp)
 	path = get_cmd_path(argv, envp, &cmd);
 	if (execve(path, cmd, envp) == -1)
 	{
-		free_cmd(cmd);
+		int	exit_code;
+
+		exit_code = (errno == ENOENT) ? 127 : 126;
 		free(path);
-		ft_error_exit("execve", 126);
+		exit_with_perror(cmd, exit_code);
 	}
 }

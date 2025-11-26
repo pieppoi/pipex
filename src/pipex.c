@@ -19,7 +19,7 @@ static void	child_process(char **argv, char **envp, int *fd)
 	infile = open(argv[1], O_RDONLY);
 	if (infile == -1)
 	{
-		perror("open infile");
+		perror(argv[1]);
 		close(fd[0]);
 		close(fd[1]);
 		exit(1);
@@ -39,7 +39,7 @@ static void	parent_process(char **argv, char **envp, int *fd)
 	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (outfile == -1)
 	{
-		perror("open outfile");
+		perror(argv[4]);
 		close(fd[0]);
 		close(fd[1]);
 		exit(1);
